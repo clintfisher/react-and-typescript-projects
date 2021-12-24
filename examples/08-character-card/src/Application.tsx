@@ -18,6 +18,9 @@ const Application = () => {
     <main>
       { loading && <Loading /> }
       { character && <CharacterInformation character={character} /> }
+      {/* { // note how you check, this wont work saying no character, its still null
+        loading && !character ? <Loading /> : <CharacterInformation character={character} />
+      } */}
     </main>
   );
 };
