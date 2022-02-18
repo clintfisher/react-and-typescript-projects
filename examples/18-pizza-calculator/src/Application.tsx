@@ -1,4 +1,4 @@
-import { useReducer } from 'react';
+import { useReducer, Dispatch } from 'react';
 
 type PizzaData = {
   numberOfPeople: number;
@@ -6,6 +6,7 @@ type PizzaData = {
   slicesPerPie: number;
 };
 
+// PizzaState is everything in PizzaData plus one more field
 type PizzaState = PizzaData & { pizzasNeeded: number };
 
 const calculatePizzasNeeded = ({
@@ -20,6 +21,7 @@ const addPizzasNeededToPizzaData = (data: PizzaData): PizzaState => {
   return { ...data, pizzasNeeded: calculatePizzasNeeded(data) };
 };
 
+// initialState is type PizzaState
 const initialState: PizzaState = {
   numberOfPeople: 8,
   slicesPerPerson: 2,
@@ -27,7 +29,13 @@ const initialState: PizzaState = {
   pizzasNeeded: 2
 };
 
-const reducer = (state: any, action: any) => {
+type PizzaAction = {
+  type: 'UPDATE_NUMBER_OF_PEOPLE' | 'UPDATE_SLICES_PER_PERSON' | 'UPDATE_SLICES_PER_PIE';
+  payload: number;
+}
+
+// any time one of these inputs change, recalculate the number of pizzas we need
+const reducer = (state: PizzaState, action: PizzaAction) => {
   if (action.type === 'UPDATE_NUMBER_OF_PEOPLE') {
     return addPizzasNeededToPizzaData({
       ...state,
@@ -52,7 +60,8 @@ const reducer = (state: any, action: any) => {
   return state;
 };
 
-const Calculation = ({ count }: { count: any }) => {
+// end result
+const Calculation = ({ count }: { count: number }) => {
   return (
     <section className="calculation">
       <p className="count">{count}</p>
@@ -61,7 +70,10 @@ const Calculation = ({ count }: { count: any }) => {
   );
 };
 
-const Calculator = ({ dispatch, state }: { state: any; dispatch: any }) => {
+const Calculator = ({ dispatch, state }: {
+  state: PizzaState;
+  dispatch: Dispatch<PizzaAction>
+}) => {
   return (
     <form onSubmit={() => {}}>
       <label htmlFor="number-of-people">Number of People</label>
@@ -72,7 +84,7 @@ const Calculator = ({ dispatch, state }: { state: any; dispatch: any }) => {
         onChange={(event) =>
           dispatch({
             type: 'UPDATE_NUMBER_OF_PEOPLE',
-            payload: event.target.value
+            payload: +event.target.value
           })
         }
       />
@@ -84,7 +96,7 @@ const Calculator = ({ dispatch, state }: { state: any; dispatch: any }) => {
         onChange={(event) =>
           dispatch({
             type: 'UPDATE_SLICES_PER_PERSON',
-            payload: event.target.value
+            payload: +event.target.value
           })
         }
       />
@@ -96,7 +108,7 @@ const Calculator = ({ dispatch, state }: { state: any; dispatch: any }) => {
         onChange={(event) =>
           dispatch({
             type: 'UPDATE_SLICES_PER_PIE',
-            payload: event.target.value
+            payload: +event.target.value
           })
         }
       />
